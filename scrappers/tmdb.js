@@ -29,7 +29,10 @@ var tmdb = require('tmdb-3')("7c5105894b0446bb59b01a30cf235f3b")
 var search = function(movie, cb) {
 
 	movie.search = movie.search !== undefined ? movie.search : dummyName(movie.name, movie)
-	movie.title = movie.title == undefined ? _s.titleize(movie.name) : movie.title
+	movie.title = movie.title === undefined ? _s.titleize(movie.name) : movie.title
+  movie.synopsis = ''
+  movie.trailer = ''
+  movie.picture = ''
 
 	debug('Gathering infos on', movie.search)
 
@@ -46,86 +49,69 @@ var search = function(movie, cb) {
 	  if(err) return cb(err, movie)
 
 		if(res.total_results > 0) {
-    		var infos = res.results
+        var infos = res.results
 
-    		if(infos !== undefined) {
+        if(infos !== undefined) {
 
-    			//Index allocine info
-    			var index = false
+          //Index allocine info
+          var index = false
 
-    			var m_name = _s.slugify(movie.search)
+          var m_name = _s.slugify(movie.search)
 
-    			//Parse each infos founded, if title matchs, break
-    			var nb_resultats = infos.length, i = 0
+          //Parse each infos founded, if title matchs, break
+          var nb_resultats = infos.length, i = 0
 
-    			//loop beginning with best match !
-    			while(i < nb_resultats - 1 && index === false) {
-    				
-    				var e = infos[i],
-    					//slugifying names - matches are better
-    					e_title = _s.slugify(e.title), 
-    					e_original = _s.slugify(e.originalTitle)
+          //loop beginning with best match !
+          while(i < nb_resultats - 1 && index === false) {
 
-    				if(
+            var e = infos[i],
+              //slugifying names - matches are better
+              e_title = _s.slugify(e.title), 
+              e_original = _s.slugify(e.originalTitle)
 
-    					( e.title !== undefined && e_title.indexOf(m_name) !== -1 ) 
-    					||
-    					( e.originalTitle !== undefined && e_original.indexOf(m_name) !== -1 )
+            if(
+              ( e.title !== undefined && e_title.indexOf(m_name) !== -1 ) ||
+              ( e.originalTitle !== undefined && e_original.indexOf(m_name) !== -1 )
+            )	{
+              index = i
+            }
 
-    				)	{
-    						index = i
-    					}
+            i++
+          }
 
-    				i++
-    			}
+				  if(index === false)
+					 index = 0 
 
-				if(index === false)
-					index = 0 
+          movie.code = infos[index].id
 
-        		movie.code = infos[index].id
+          //Searching for a specific code
+          tmdb.infos(movie.movieType == 'tvseries' ? 'tv' : 'movie', movie.code, {language: 'fr'}, function(err, specific_infos) { 
 
-        		//Searching for a specific code
-        		tmdb.infos(movie.movieType == 'tvseries' ? 'tv' : 'movie', movie.code, {language: 'fr'}, function(err, specific_infos) { 
+            if(specific_infos) {
+              if(movie.movieType == 'tvseries') {
+                movie.title = specific_infos.name ? specific_infos.name : specific_infos.original_name
+              } else {
+                movie.title = specific_infos.title !== undefined ? specific_infos.title : specific_infos.original_title
+              }
 
-        			if(specific_infos) {
-                if(movie.movieType == 'tvseries')
-                  movie.title = specific_infos.name ? specific_infos.name : specific_infos.original_name
-                else
-          			 movie.title = specific_infos.title !== undefined ? specific_infos.title : specific_infos.original_title
+              movie.synopsis = specific_infos.overview ? _s.trim(specific_infos.overview.replace(/(<([^>]+)>)/ig, '')) : ''
+              movie.picture = specific_infos.poster_path
 
-          			movie.synopsis = specific_infos.overview ? _s.trim(specific_infos.overview.replace(/(<([^>]+)>)/ig, '')) : ''
-          			movie.picture = specific_infos.poster_path
+            } else {
+              infos = infos[index]
 
-          		} else {
-          			infos = infos[index]
+              movie.title = infos.title !== undefined ? infos.title : infos.original_title
+              movie.picture = infos.poster_path !== undefined ? infos.poster_path : null
+            }
 
-          			movie.title = infos.title !== undefined ? infos.title : infos.original_title
-          			movie.picture = infos.poster_path !== undefined ? infos.poster_path : null
-          		}
-
-        			return cb(err, movie)
-
-        		})
-        	} else {
-        		//Too long
-        	//	var words = _s.words(movie.search), num_words = words.length
-
-        		// if(num_words >= 3 && words[num_words - 1].length > 3) {
-        			 
-          //     words.pop()
-
-        		// 	movie.search = words.join(' ')
-
-        		//  	search(movie, cb)
-        		// } else {
-      			 //No movie founded
-          		return cb(err, movie)  			
-        		//}
-
-        	}
-    	} else {
-    		return cb(err, movie)
-    	}
+            return cb(err, movie)
+          })
+        } else {
+          return cb(err, movie)       
+        }
+      } else {
+        return cb(err, movie)
+      }
 	})
 }
 
