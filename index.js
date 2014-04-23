@@ -9,7 +9,7 @@ module.exports = function(options) {
 		fs.mkdirSync(options.tmp, '0775');
 
 	//storing configuration into env
-	process.env.ezseed = options
+	process.ezseed = options
 
 	db(function(){
 		db = db.db
