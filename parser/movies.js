@@ -2,6 +2,7 @@ var p = require('path')
   , _s = require('underscore.string')
   , tag = require('./helpers').tag
   , dummyName = require('./helpers').dummyName
+  , debug = require('debug')('ezseed:watcher:parser:movies')
 
 //Tags (to be improved)
 var qualities = ['720p', '1080p', 'cam', 'ts', 'dvdscr', 'r5', 'dvdrip', 'dvdr', 'tvrip', 'hdtvrip', 'hdtv', 'brrip']
@@ -23,14 +24,14 @@ module.exports = function(path) {
 	if(prevDir.length > basename.length)
 		basename = prevDir
 
-	var err = null
+	debug('basename', basename)
 
-	  , name = basename.replace(p.extname(basename), '')
-	  		.replace(/^\-[\w\d]+$/i, '') //team name
-	  		.replace(/\-|_|\(|\)/g, ' ') //special chars
-	  		.replace(/([\w\d]{2})\./ig, "$1 ") //Replacing dot with min 2 chars before
-	  		.replace(/\.\.?([\w\d]{2})/ig, " $1")
-	  		.replace(/\s\s+/, ' ') //same with 2 chars after
+	var name = basename.replace(p.extname(basename), '')
+		       .replace(/^\-[\w\d]+$/i, '') //team name
+		       .replace(/\-|_|\(|\)/g, ' ') //special chars
+		       .replace(/([\w\d]{2})\./ig, "$1 ") //Replacing dot with min 2 chars before
+		       .replace(/\.\.?([\w\d]{2})/ig, " $1")
+		       .replace(/\s\s+/, ' ') //same with 2 chars after
 
       , words = _s.words(name)
 
@@ -45,18 +46,18 @@ module.exports = function(path) {
 		
 	  , r = new RegExp(/EP?[0-9]{1,2}|[0-9]{1,2}x[0-9]{1,2}/i) //searches for the tv show
 	  , y = new RegExp(/([0-9]{4})/) //Year regex
-	  
-
+	  , ar = []
+  
 	//Found a tv show
 	if(r.test(name)) {
 
 		movie.movieType = 'tvseries'
 
 		//Searches for the Season number + Episode number
-		r = new RegExp(/(.+)S([0-9]+)EP?([0-9]+)/i)
-		var r2 = new RegExp(/(.+)([0-9]+)x([0-9])+/i)
+		r = new RegExp(/(.*)S([0-9]{1,3})EP?([0-9]{1,3})/i)
+		var r2 = new RegExp(/(.*)\s([0-9]{1,3})x([0-9]{1,3})/i)
 
-		var ar = name.match(r)
+		ar = name.match(r)
 
 		//If it matches
 		if(ar != null) {
@@ -77,7 +78,7 @@ module.exports = function(path) {
 
 		movie.movieType = 'movie'
 
-		var ar = name.match(y)
+		ar = name.match(y)
 
 		//year > 1900
 		if(ar != null && ar[0] > 1900) {
@@ -90,6 +91,8 @@ module.exports = function(path) {
 	} else {
 		movie.name = dummyName(name, movie)
 	}
+
+	//debug('movie', movie)
 
 	return movie
 }
