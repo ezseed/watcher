@@ -2,7 +2,7 @@ var expect = require('chai').expect
   , parser = require('../../parser/albums')
   , p = require('path')
   , fs = require('fs')
-  , fixtures_path = p.join(__dirname, '../fixtures/audio')
+  , fixtures_path = p.join(__dirname, '../fixtures/parser/audio')
   , rm = require('rimraf')
 
 process.ezseed = {}
@@ -18,9 +18,8 @@ describe('audio parser', function() {
 	})
 
 	it('should parse ID3 tags', function(cb) {
-		parser(p.join(fixtures_path, 'ezseed.mp3'), true, function(err, tags) {
+		parser(p.join(fixtures_path, '/ezseed/ezseed.mp3'), function(err, tags) {
 			expect(err).to.be.null
-
 
 			expect(tags).to.have.property('title', 'ezseed')
 			expect(tags).to.have.property('artist', 'ezseed')
@@ -35,21 +34,33 @@ describe('audio parser', function() {
 
 	})
 
-	it('should parse ID3 tags without picture', function(cb) {
-		parser(p.join(fixtures_path, 'ezseed.mp3'), false, function(err, tags) {
+	it('should find picture in file parent directory', function(cb) {
+		var no_cover = p.join(fixtures_path, 'ezseed-no-cover')
+
+		parser(p.join(no_cover, 'ezseed.mp3'), function(err, tags) {
 			expect(err).to.be.null
-			expect(tags.picture).to.be.empty
+			expect(tags.picture).not.to.be.empty
+			expect(tags.picture).to.contain(no_cover)
 			cb()
 		})
 	})
 
-	it('should find picture in file parent directory', function(cb) {
-		parser(p.join(fixtures_path, 'cover', 'ezseed.mp3'), true, function(err, tags) {
+	it('should find absolutly no cover', function(cb) {
+		var no_cover = p.join(fixtures_path, 'ezseed-no-cover-at-all')
+
+		parser(p.join(no_cover, 'toxicity.mp3'), function(err, tags) {
 			expect(err).to.be.null
-			expect(tags.picture).to.contain(p.join(fixtures_path, 'cover'))
-			expect(tags.picture).not.to.be.empty
+			expect(tags.picture).to.be.null
+			cb()
+		})	
+	})
+
+	it('should send an error', function(cb) {
+		parser(p.join(fixtures_path, '/something.txt'), function(err, tags) {
+			expect(err).not.to.be.null
 			cb()
 		})
+
 	})
 
 	after(function(cb) {

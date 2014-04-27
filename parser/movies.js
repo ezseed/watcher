@@ -17,12 +17,10 @@ var qualities = ['720p', '1080p', 'cam', 'ts', 'dvdscr', 'r5', 'dvdrip', 'dvdr',
   
 module.exports = function(path) {
 
-	var basename = p.basename(path), prevDir = path.replace('/' + basename, '').split('/')
-
-	prevDir = prevDir[prevDir.length - 1]
+	var basename = p.basename(path), prevDir = p.basename(p.dirname(path))
 
 	if(prevDir.length > basename.length)
-		basename = prevDir
+		basename = prevDir + '.' + p.extname(basename)
 
 	debug('basename', basename)
 
@@ -30,8 +28,8 @@ module.exports = function(path) {
 		       .replace(/^\-[\w\d]+$/i, '') //team name
 		       .replace(/\-|_|\(|\)/g, ' ') //special chars
 		       .replace(/([\w\d]{2})\./ig, "$1 ") //Replacing dot with min 2 chars before
-		       .replace(/\.\.?([\w\d]{2})/ig, " $1")
-		       .replace(/\s\s+/, ' ') //same with 2 chars after
+		       .replace(/\.\.?([\w\d]{2})/ig, " $1")  //same with 2 chars after
+		       .replace(/\s\s+/, ' ') 
 
       , words = _s.words(name)
 
@@ -92,7 +90,7 @@ module.exports = function(path) {
 		movie.name = dummyName(name, movie)
 	}
 
-	//debug('movie', movie)
+	// debug('movie', movie)
 
 	return movie
 }

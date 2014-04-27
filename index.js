@@ -1,41 +1,64 @@
-var fs = require('fs'), p = require('path'), db = require('ezseed-database')
+var fs = require('fs')
+  , p = require('path')
+  , logger = require('ezseed-logger')({}, 'watcher')
+  , debug = require('debug')('ezseed:watcher')
+  , chalk = require('chalk')
+  , axon = require('axon')
+  , sock = axon.socket('push')
 
-module.exports = function(options) {
+module.exports = function(options, cb) {
 	
+	options = options || {}
 	options.root = options.root || __dirname
 	options.tmp = options.tmp || p.join(options.root, '/tmp')
+	options.socket = options.socket || 'unix://'+options.root+'/ezseed.sock'
 
+	options.path = {}
+	options.path.relative = options.pathToWatch ? p.relative(__dirname, options.pathToWatch) : p.relative(__dirname, p.resolve(__dirname, './test/fixtures/watch'))
+	options.path.absolute = p.resolve(__dirname, options.path.relative)
+	options.db = options.db || {}
+
+	var watcher_options = {
+		ignored: /[\/\\]\.|node_modules/,
+		persistent: true,
+		ignoreInitial: true,
+		// usePolling: false,
+		// useFsEvents: true
+	}
+	
 	if(!fs.existsSync(options.tmp))
-		fs.mkdirSync(options.tmp, '0775');
+		fs.mkdirSync(options.tmp, '0775')
 
-	//storing configuration into env
+	//storing configuration into process
 	process.ezseed = options
 
-	db(function(){
-		db = db.db
+	require('ezseed-database')(options.db, function(){
 
-		require('chokidar')
-			.watch('file or dir', {ignored: /[\/\\]\./, persistent: true})
-			//all => path + add to db, chokidar just launches parsing once
-			.on('all', function(event, path) {
-			   console.log(event, path)
-/*
-			   	database.paths.getAll(function(err, docs) {
+		sock.bind(process.ezseed.socket)
 
-			var paths = [];
+		sock.on('bind', function() {
+		
+			debug('Socket bind on %s', process.ezseed.socket)
+			watcher_options.socket = sock
+			
+			var watcher = require('./lib/watcher').watch(options.path.relative, watcher_options)
+		
+			//optional callback
+			if(cb) cb(null, watcher)
 
-			if(docs) {
-				for(var p in docs)
-					paths.push(docs[p].path);
+		})
+			
+	})
 
-				explorer.explore({docs : {paths : docs}, paths : paths}, function(err, update) {
-					self.setInterval();
-				});
-			} else {
-				self.setInterval();
-			}
-		});*/
-			})
+
+	process.on('SIGINT', function() {
+	    logger.info(chalk.bold.red("Caught interrupt signal"))
+
+	    setTimeout(function() {
+		    process.exit()
+		, 1000})
 
 	})
+
+
 }

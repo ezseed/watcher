@@ -4,7 +4,7 @@
   "description": "Ezseed watcher handles fiels watching",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/index.js"
+    "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -22,17 +22,27 @@
   "homepage": "https://github.com/ezseed/watcher",
   "dependencies": {
     "tmdb-3": "0.0.5",
-    "ezseed-database": "~0.1.2",
+    "ezseed-database": "~0.1.8",
     "underscore.string": "~2.3.3",
     "chokidar": "~0.8.2",
     "mime": "~1.2.11",
-    "id3": "0.0.2",
     "debug": "~0.8.0",
-    "ezseed-logger": "https://github.com/ezseed/logger/archive/v0.0.1.tar.gz"
+    "ezseed-logger": "https://github.com/ezseed/logger/archive/v0.0.2.tar.gz",
+    "recursive-readdir": "~1.0.0",
+    "chalk": "~0.4.0",
+    "ansi-rainbow": "0.0.1",
+    "underscore": "~1.6.0",
+    "async": "~0.7.0",
+    "request": "~2.34.0",
+    "memory-cache": "0.0.5",
+    "axon": "~2.0.0",
+    "musicmetadata": "~0.3.7"
   },
   "devDependencies": {
     "chai": "~1.9.1",
     "mocha": "~1.18.2",
-    "rimraf": "~2.2.6"
+    "rimraf": "~2.2.6",
+    "shelljs": "~0.2.6",
+    "moment": "~2.6.0"
   }
 }

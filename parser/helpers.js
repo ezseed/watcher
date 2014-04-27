@@ -7,15 +7,12 @@ var helpers = {
 	//Dummy name by replacing the founded objects (qulity, subtitles etc.)
 	dummyName: function (name, obj) {
 
-		var o = {quality: '', subtitles: '', language: '', format: ''}
-
-		if(name !== undefined)
-			name = name.toLowerCase()
-					.replace(obj.quality.toLowerCase(), '')
-					.replace(obj.subtitles.toLowerCase(), '')
-					.replace(obj.language.toLowerCase(), '')
-					.replace(obj.format.toLowerCase(), '')
-					.replace(obj.audio.toLowerCase(), '')
+		name = name.toLowerCase()
+				.replace(obj.quality.toLowerCase(), '')
+				.replace(obj.subtitles.toLowerCase(), '')
+				.replace(obj.language.toLowerCase(), '')
+				.replace(obj.format.toLowerCase(), '')
+				.replace(obj.audio.toLowerCase(), '')
 
 
 		return _s.titleize(_s.trim(name))

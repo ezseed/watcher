@@ -1,4 +1,5 @@
 var request = require('request')
+var debug = require('debug')('ezseed:watcher:scrapper')
 
 
 // http://www.apple.com/itunes/affiliates/resources/documentation/itunes-store-web-service-search-api.html#searching
@@ -45,7 +46,7 @@ var itunes = {
          if(response.resultCount) {
             callback(null, response.results[0])
          } else {
-            callback("Aucun résultat", {})
+            callback("No results", null)
          }
       })
 
@@ -54,21 +55,22 @@ var itunes = {
     * Shortcut to search from album item
     */
    infos: function(album, cb) {
-    var search = album.album !== null && album.artist !== null ? album.artist + ' ' + album.album : null
 
-    if(search === null) {
-      if(album.album !== null)
-        search = album.album
-      else if(album.artist !== null)
-        search = album.artist
+    var empty = function(value) {
+      return value === null || value === undefined || value.replace(/\s+/, '').length === 0
     }
 
-    if(search) {
-      this.lucky(search, function(err, results) {
-        cb(err, results)
-      })
+    var search = ''
+
+    search += empty(album.artist) ? '' : album.artist + ' '
+    search += empty(album.album) ? '' : album.album
+
+    debug('Searching on iTunes for %s', search)
+
+    if(!empty(search)) {
+      this.lucky(search, cb)
     } else {
-      cb("Nothing to search", {})
+      cb("Nothing to search", null)
     }
    }
 }

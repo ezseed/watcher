@@ -1,28 +1,6 @@
 var debug = require('debug')('ezseed:watcher:scrapper')
   , _s = require('underscore.string')
-
-/*
-* Get an object by the string
-* Example :
-* var file.type = "movie"
-* var x = {movie:[0,1,2,3]}
-* Object.byString(x, file.type)
-* Output [0,1,2,3 ]
-*/
-Object.byString = function(o, s) {
-    s = s.replace(/\[(\w+)\]/g, '.$1')  // convert indexes to properties
-    s = s.replace(/^\./, '') // strip leading dot
-    var a = s.split('.')
-    while (a.length) {
-        var n = a.shift()
-        if (n in o) {
-            o = o[n]
-        } else {
-            return
-        }
-    }
-    return o
-}
+  , dummyName = require('../parser/helpers').dummyName
 
 var tmdb = require('tmdb-3')("7c5105894b0446bb59b01a30cf235f3b")
 
