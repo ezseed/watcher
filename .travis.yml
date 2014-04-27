@@ -8,3 +8,5 @@ node_js:
    - "0.10.25"
 services:
    - mongodb
+env:
+  - COVERALLS_REPO_TOKEN="UUv21DpjDLamk1NlnikhhtazFFdKOD6Ws" COVERALLS_SERVICE_NAME="ezseed/watcher"
