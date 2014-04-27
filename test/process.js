@@ -47,6 +47,8 @@ var wait_until_task_complete = function(cb) {
 			can_go_on = !can_go_on
 			clearInterval(interval)
 			cb()
+			//hack to get print after it('') statement does
+			console.log(timer.print())
 		}
 	}, 100)
 }
@@ -81,7 +83,6 @@ describe('watcher', function() {
 
 			sock.on('message', function(msg, update){
 				timer.save()
-				console.log(timer.print())
 				expect(msg).to.equal('update')
 				expect(update).to.have.length.of(1)
 				can_go_on = true
@@ -164,7 +165,7 @@ describe('watcher', function() {
 	it('should have the right amount of albums and songs', function(cb) {
 		expect(albums).to.have.length.of(4)
 
-		var l = albums.songs.length
+		var l = albums.length
 
 		while(l--) {
 			expect(albums[1].songs.length).to.be.at.least(1)
