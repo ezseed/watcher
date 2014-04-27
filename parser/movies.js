@@ -29,7 +29,8 @@ module.exports = function(path) {
 		       .replace(/\-|_|\(|\)/g, ' ') //special chars
 		       .replace(/([\w\d]{2})\./ig, "$1 ") //Replacing dot with min 2 chars before
 		       .replace(/\.\.?([\w\d]{2})/ig, " $1")  //same with 2 chars after
-		       .replace(/\s\s+/, ' ') 
+		       .replace(/part\s?\d{1}/ig, '' ) //part
+		       .replace(/\s\s+/, ' ') //double space
 
       , words = _s.words(name)
 
