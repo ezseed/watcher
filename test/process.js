@@ -137,12 +137,12 @@ describe('watcher', function() {
 
 
 	it('should have the right amount of movies', function(cb) {
-		expect(movies).to.have.length.of(4)
+		expect(movies).to.have.length.of(5)
 		//hack to force async
 		setTimeout(cb, 10)
 	})
 
-	it('should have 2 series and 2 movies', function(cb) {
+	it('should have 2 series and 3 movies', function(cb) {
 		var series = 0, films = 0
 
 		for (var i = 0; i < movies.length; i++) {
@@ -156,7 +156,7 @@ describe('watcher', function() {
 		}
 
 		expect(series).to.equal(2)
-		expect(films).to.equal(2)
+		expect(films).to.equal(3)
 
 		setTimeout(cb, 10)
 
@@ -177,11 +177,9 @@ describe('watcher', function() {
 	})
 
 		
-	it('should have the right others names', function(cb) {
+	it('should have the right number of others', function(cb) {
 
 		expect(others).to.have.length.of(3)
-		expect(others[0]).to.have.property('name', 'other')
-		expect(others[0].files).to.have.length.of(2)
 
 		setTimeout(cb, 10)
 
@@ -213,6 +211,26 @@ describe('watcher', function() {
 	it('should have been faster than before', function(cb) {
 		expect(timer.intervals[0] > timer.intervals[1]).to.be.true
 		cb()
+	})
+
+	it('should trigger watcher again [add]', function(cb) {
+
+		fs.writeFileSync(pathToWatch.path+'/video/LOL.S04E16.1080p-crew.mkv', 'another test data')
+		timer.start()
+
+		wait_until_task_complete(cb)
+	})
+
+	it('should have added the tvseries to the right item', function(cb) {
+		
+		db.paths.get(pathToWatch._id, function(err, docs) {
+			expect(err).to.be.null
+
+			expect(docs.movies).to.have.length.of(results.movies.length)
+			cb()
+
+		})
+
 	})
 
 	it('should trigger watcher again [remove]', function(cb) {
