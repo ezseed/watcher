@@ -62,27 +62,36 @@ var search = function(movie, cb) {
 
           movie.code = infos[index].id
 
+          //default
+          infos = infos[index]
+          movie.title = infos.title !== undefined ? infos.title : infos.original_title
+          movie.picture = infos.poster_path !== undefined ? infos.poster_path : null
+
           //Searching for a specific code
           tmdb.infos(movie.movieType == 'tvseries' ? 'tv' : 'movie', movie.code, {language: 'fr'}, function(err, specific_infos) { 
 
-            if(specific_infos) {
-              if(movie.movieType == 'tvseries') {
-                movie.title = specific_infos.name ? specific_infos.name : specific_infos.original_name
-              } else {
-                movie.title = specific_infos.title !== undefined ? specific_infos.title : specific_infos.original_title
-              }
+            if(err || !specific_infos)
+              cb(err, movie)
 
-              movie.synopsis = specific_infos.overview ? _s.trim(specific_infos.overview.replace(/(<([^>]+)>)/ig, '')) : ''
-              movie.picture = specific_infos.poster_path
-
+            if(movie.movieType == 'tvseries') {
+              movie.title = specific_infos.name ? specific_infos.name : specific_infos.original_name
             } else {
-              infos = infos[index]
-
-              movie.title = infos.title !== undefined ? infos.title : infos.original_title
-              movie.picture = infos.poster_path !== undefined ? infos.poster_path : null
+              movie.title = specific_infos.title != null ? specific_infos.title : specific_infos.original_title
             }
 
-            return cb(err, movie)
+            movie.picture = specific_infos.poster_path
+
+            //no synopsis try english
+            if(specific_infos.overview != null && specific_infos.overview.length === 0) {
+              tmdb.infos(movie.movieType == 'tvseries' ? 'tv' : 'movie', movie.code, {}, function(err, specific_infos_en) { 
+                movie.synopsis = specific_infos_en.overview ? _s.trim(specific_infos_en.overview.replace(/(<([^>]+)>)/ig, '')) : ''
+                return cb(err, movie)
+              })
+            } else {
+              movie.synopsis = specific_infos.overview ? _s.trim(specific_infos.overview.replace(/(<([^>]+)>)/ig, '')) : ''
+              return cb(err, movie)
+            }
+            
           })
         } else {
           return cb(err, movie)       
