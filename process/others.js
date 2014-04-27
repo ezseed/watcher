@@ -19,16 +19,13 @@ module.exports = function(params) {
 	var cached = cache.get('others') ? cache.get('others') : []
 
 	var pathToWatch = params.pathToWatch
-      , files = params.others
-	  , e
 	  , others = []
+	  , e, l = params.others.length
 
-	debug('Has %s files to parse', files.length)
-
-	if(!files.length)
-		return others
-
-	while(e = files.shift()) {
+	debug('Has %s files to parse', l)
+	
+	while(l--) {
+		e = params.others[l]
 		
 		var exists = false
 
@@ -61,12 +58,6 @@ module.exports = function(params) {
 
 			if(e.prevDir != pathToWatch) {
 
-				// e.prevDir = 
-				// 	p.join(
-				// 		pathToWatch, 
-				// 		e.prevDir.replace(pathToWatch, '').split('/')[1]
-				// 	)
-				
 				indexMatch = findIndex(others, function(other) { return e.prevDir == other.prevDir })
 				name = p.basename(e.prevDir)
 				single = false
@@ -78,17 +69,12 @@ module.exports = function(params) {
 			debug('%s is single ?', e.name, single)
 
 			if(single) {
-				//var t = mime.lookup(e.path).split('/')[0]
-
-				//if(e.prevDir == pathToWatch && t != 'audio' && t != 'video')
-				//{
 				others.push({
 					name : name,
 					files : [e],
 					prevDir : e.prevDir,
 					prevDirRelative : e.prevDir.replace(process.ezseed.root, '')
 				})
-				//}
 			} else if(indexMatch !== null) {
 				others[indexMatch].files.push(e)
 
