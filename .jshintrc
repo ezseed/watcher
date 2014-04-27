@@ -6,5 +6,6 @@
 	"smarttabs": true,
 	"unused": "vars",
 	"expr": true,
-	"eqnull": true
+	"eqnull": true,
+	"loopfunc": true
 }
