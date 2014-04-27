@@ -48,7 +48,7 @@ module.exports = function(params, cb) {
 		if(indexMatch !== null) {
 
 			if(indexMatch.match == 'existing') {
-				db.movies.video.add(params.existing[indexMatch.existing]._id, e, callback)
+				db.movies.videos.add(params.existing[indexMatch.existing]._id, e, callback)
 			} else {
 				movies[indexMatch.movies].videos.push(e)
 
