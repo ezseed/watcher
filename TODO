@@ -1,7 +1,0 @@
-TODO
-
-1) improve getAlbumInformations through scrapper
-2) tests on release
-3) tests on parser
-4) rewrite explorer
-5) chokidar + test explorer
