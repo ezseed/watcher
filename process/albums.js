@@ -55,17 +55,20 @@ module.exports = function(params, cb) {
 			require('../parser/albums')(e.path, function(err, infos) {
 					
 				//this tests if the artist don't match one of the songs already there it's a Various Artist album
-				if(infos.artist !== null && albums[indexMatch].album !== null && albums[indexMatch].artist !== 'VA') { 
+				if(infos.artist !== null && albums[indexMatch].artist !== 'VA') { 
 					var a = _s.slugify(albums[indexMatch].artist)
 					var b = _s.slugify(infos.artist)
-					
-					if(a.indexOf(b) === -1 && b.indexOf(a) === -1)
+
+					if(a.indexOf(b) === -1 || b.indexOf(a) === -1) {
 						albums[indexMatch].artist = 'VA'
+					}
 				}
 
 				infos.specific.disc = e.specific.disc || infos.specific.disc
 
 				e.specific = infos.specific 
+
+				debug('%s is a song in an album %s', e.name, albums[indexMatch].album)
 
 				albums[indexMatch].songs.push(e)
 				
