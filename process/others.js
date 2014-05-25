@@ -73,7 +73,7 @@ module.exports = function(params) {
 					name : name,
 					files : [e],
 					prevDir : e.prevDir,
-					prevDirRelative : e.prevDir.replace(process.ezseed.root, '')
+					prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
 				})
 			} else if(indexMatch !== null) {
 				others[indexMatch].files.push(e)
@@ -94,7 +94,7 @@ module.exports = function(params) {
 						name : name,
 						files : [e],
 						prevDir : e.prevDir,
-						prevDirRelative : e.prevDir.replace(process.ezseed.root, '')
+						prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
 					})
 				} else {
 					//we cache files that aren't others, checkIsOther is heavy...

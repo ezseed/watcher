@@ -1,7 +1,7 @@
 var fs = require('fs')
   , Buffer = require('buffer').Buffer
   , p = require('path')
-  , logger = require('ezseed-logger')({}, 'watcher')
+  , logger = require('ezseed-logger')('watcher')
   , mm = require('musicmetadata'), tags
   
 module.exports = function(filePath, cb) {
@@ -28,7 +28,7 @@ module.exports = function(filePath, cb) {
 
 			var coverName = new Buffer(tags.artist + tags.album).toString().replace(/[^a-zA-Z0-9]+/ig,'') + '.' + meta.picture[0].format
 
-			  , file = p.join(process.ezseed.tmp, coverName)
+			  , file = p.join(process.ezseed_watcher.tmp, coverName)
 
 				if(!fs.existsSync(file))
 					fs.writeFileSync(file, meta.picture[0].data)

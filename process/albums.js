@@ -2,7 +2,7 @@ var p = require('path')
   , _ = require('underscore')
   , _s = require('underscore.string')
   , itunes = require('../scrappers/itunes')
-  , logger = require('ezseed-logger')({}, 'watcher')
+  , logger = require('ezseed-logger')('watcher')
   , findIndex = require('./helpers').findIndex
   , async = require('async')
   , debug = require('debug')('ezseed:watcher:process:albums')
@@ -112,7 +112,7 @@ module.exports = function(params, cb) {
 							songs : [e],
 							picture : infos.picture,
 							prevDir : e.prevDir,
-							prevDirRelative : e.prevDir.replace(process.ezseed.root, '')
+							prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
 						}
 
 					if(a.picture == null) {

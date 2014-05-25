@@ -1,6 +1,6 @@
 var fs = require('fs')
   , p = require('path')
-  , logger = require('ezseed-logger')({}, 'watcher')
+  , logger = require('ezseed-logger')('watcher')
   , debug = require('debug')('ezseed:watcher')
   , chalk = require('chalk')
   , axon = require('axon')
@@ -14,7 +14,7 @@ module.exports = function(options, cb) {
 	options.socket = options.socket || 'unix://'+options.root+'/ezseed.sock'
 
 	options.path = {}
-	options.path.relative = options.pathToWatch ? p.relative(__dirname, options.pathToWatch) : p.relative(__dirname, p.resolve(__dirname, './test/fixtures/watch'))
+	options.path.relative = options.home ? p.relative(__dirname, options.home) : p.relative(__dirname, p.resolve(__dirname, './test/fixtures/watch'))
 	options.path.absolute = p.resolve(__dirname, options.path.relative)
 	options.db = options.db || {}
 
@@ -30,15 +30,15 @@ module.exports = function(options, cb) {
 		fs.mkdirSync(options.tmp, '0775')
 
 	//storing configuration into process
-	process.ezseed = options
+	process.ezseed_watcher = options
 
 	require('ezseed-database')(options.db, function(){
 
-		sock.bind(process.ezseed.socket)
+		sock.bind(process.ezseed_watcher.socket)
 
 		sock.on('bind', function() {
 		
-			debug('Socket bind on %s', process.ezseed.socket)
+			debug('Socket bind on %s', process.ezseed_watcher.socket)
 			watcher_options.socket = sock
 			
 			var watcher = require('./lib/watcher').watch(options.path.relative, watcher_options)

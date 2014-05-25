@@ -5,13 +5,13 @@ var expect = require('chai').expect
   , fixtures_path = p.join(__dirname, '../fixtures/parser/audio')
   , rm = require('rimraf')
 
-process.ezseed = {}
-process.ezseed.tmp = p.join(__dirname, './tmp')
+process.ezseed_watcher = {}
+process.ezseed_watcher.tmp = p.join(__dirname, './tmp')
 
 describe('audio parser', function() {
 
 	before(function(cb) {
-		fs.mkdir(process.ezseed.tmp, 0755, function(err) {
+		fs.mkdir(process.ezseed_watcher.tmp, 0755, function(err) {
 			expect(err).to.be.null
 			cb()
 		})
@@ -26,7 +26,7 @@ describe('audio parser', function() {
 			expect(tags).to.have.property('album', 'ezseed')
 			expect(tags).to.have.property('genre', 'reggae')
 
-			expect(tags.picture).to.contain(process.ezseed.tmp)
+			expect(tags.picture).to.contain(process.ezseed_watcher.tmp)
 			expect(fs.existsSync(tags.picture)).to.be.true
 
 			cb()
@@ -64,7 +64,7 @@ describe('audio parser', function() {
 	})
 
 	after(function(cb) {
-		rm(process.ezseed.tmp, function(err) {
+		rm(process.ezseed_watcher.tmp, function(err) {
 			expect(err).to.be.null
 			cb()
 		})

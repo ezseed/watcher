@@ -1,6 +1,6 @@
 var _ = require('underscore')
   , tmdb = require('../scrappers/tmdb')
-  , logger = require('ezseed-logger')({}, 'watcher')
+  , logger = require('ezseed-logger')('watcher')
   , findIndex = require('./helpers').findIndex
   , match = require('./helpers').match
   , async = require('async')
@@ -93,7 +93,7 @@ module.exports = function(params, cb) {
 
 						videos : [e],
 						prevDir : e.prevDir,
-						prevDirRelative : e.prevDir.replace(process.ezseed.root, '')
+						prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
 					})
 
 					return callback()

@@ -74,7 +74,7 @@ describe('watcher', function() {
 			
 			self.watcher = watcher
 
-			sock.connect(process.ezseed.socket)
+			sock.connect(process.ezseed_watcher.socket)
 
 			sock.on('connect', function() {			
 				//create a path to watch
@@ -94,10 +94,10 @@ describe('watcher', function() {
 
 	it('should create a path', function(cb) {
 
-		db.paths.save(process.ezseed.path.absolute, function(err, doc) {
+		db.paths.save(process.ezseed_watcher.path.absolute, function(err, doc) {
 					
 			if(err) {
-				db.paths.get(process.ezseed.path.absolute, function(err, doc) {
+				db.paths.get(process.ezseed_watcher.path.absolute, function(err, doc) {
 					expect(err).to.be.null
 					pathToWatch = doc
 					cb()
@@ -263,7 +263,8 @@ describe('watcher', function() {
 	after(function(cb) {
 		self.watcher.close()
 		db.paths.remove(pathToWatch._id, function(err) {
-			sh.rm('-rf', process.ezseed.tmp)
+			sh.rm('-rf', process.ezseed_watcher.tmp)
+			sh.rm('-rf', p.join(process.ezseed_watcher.root, 'ezeed.sock'))
 			expect(err).to.be.null
 			cb()
 		})

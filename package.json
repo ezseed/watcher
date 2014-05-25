@@ -4,7 +4,7 @@
   "description": "Ezseed watcher handles fiels watching",
   "main": "index.js",
   "scripts": {
-    "test": "node node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -27,7 +27,6 @@
     "chokidar": "~0.8.2",
     "mime": "~1.2.11",
     "debug": "~0.8.0",
-    "ezseed-logger": "https://github.com/ezseed/logger/archive/v0.0.2.tar.gz",
     "recursive-readdir": "~1.0.0",
     "chalk": "~0.4.0",
     "ansi-rainbow": "0.0.1",
@@ -36,7 +35,8 @@
     "request": "~2.34.0",
     "memory-cache": "0.0.5",
     "axon": "~2.0.0",
-    "musicmetadata": "~0.3.7"
+    "musicmetadata": "~0.3.7",
+    "ezseed-logger": "~0.1.0"
   },
   "devDependencies": {
     "chai": "~1.9.1",
