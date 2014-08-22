@@ -24,7 +24,7 @@
     "tmdb-3": "0.0.5",
     "ezseed-database": "~0.1.8",
     "underscore.string": "~2.3.3",
-    "chokidar": "~0.8.2",
+    "chokidar": "~0.8.4",
     "mime": "~1.2.11",
     "debug": "~0.8.0",
     "recursive-readdir": "~1.0.0",
