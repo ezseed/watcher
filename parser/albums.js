@@ -6,49 +6,51 @@ var fs = require('fs')
   
 module.exports = function(filePath, cb) {
 
-	var stream = fs.createReadStream(filePath)
-	var parser = mm(stream)
+  var stream = fs.createReadStream(filePath)
+  var parser = mm(stream)
 
-	parser.on('metadata', function(meta) {
+  parser.on('metadata', function(meta) {
 
-		tags = {
-			artist: meta.albumartist.join(' ') || meta.artist.join(' '),
-			album: meta.album,
-			genre: meta.genre.join(' '),
-			title: meta.title,
-			year: meta.year,
-			specific: {
-				track: meta.track,
-				disk: meta.disk,
-				artist: meta.artist.join(' ')
-			}
-		}
+    tags = {
 
-		if(meta.picture[0] && meta.picture[0].data) {
+      artist: meta.albumartist.join(' ') || meta.artist.join(' '),
+      album: meta.album,
+      genre: meta.genre.join(' '),
+      title: meta.title,
+      year: meta.year,
+      specific: {
+        track: meta.track,
+        disk: meta.disk,
+        artist: meta.artist.join(' ')
+      }
+    }
 
-			var coverName = new Buffer(tags.artist + tags.album).toString().replace(/[^a-zA-Z0-9]+/ig,'') + '.' + meta.picture[0].format
+    if(meta.picture[0] && meta.picture[0].data) {
 
-			  , file = p.join(process.ezseed_watcher.tmp, coverName)
+      var coverName = new Buffer(tags.artist + tags.album).toString().replace(/[^a-zA-Z0-9]+/ig,'') + '.' + meta.picture[0].format
 
-				if(!fs.existsSync(file))
-					fs.writeFileSync(file, meta.picture[0].data)
-				
-				tags.picture = file
+        , file = p.join(process.ezseed_watcher.tmp, coverName)
 
-		} else {
-			tags.picture = require('./helpers').findCoverInDirectory(p.dirname(filePath))			
-		}
+        if(!fs.existsSync(file))
+          fs.writeFileSync(file, meta.picture[0].data)
+        
+        tags.picture = file.replace(process.ezseed_watcher.tmp, 'tmp/')
 
-		cb(null, tags)
-	})
+    } else {
+      tags.picture = require('./helpers').findCoverInDirectory(p.dirname(filePath))      
+    }
 
-	parser.on('done', function (err) {
-		stream.destroy()
+    cb(null, tags)
+  })
 
-		if (err) {
-			logger.error('Error while parsing metadata', err)
-			cb(err)
-		}
-	})
+  parser.on('done', function (err) {
+    stream.destroy()
+
+    if (err) {
+      logger.error('Error while parsing metadata for file: '+filePath, err)
+
+      cb(err)
+    }
+  })
 
 }

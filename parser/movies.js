@@ -93,5 +93,9 @@ module.exports = function(path) {
 
 	// debug('movie', movie)
 
+        movie.specific = {
+          episode: movie.episode
+        }
+
 	return movie
 }

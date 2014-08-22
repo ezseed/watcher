@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/ezseed/watcher",
   "dependencies": {
-    "tmdb-3": "0.0.5",
+    "tmdb-3": "0.0.6",
     "ezseed-database": "~0.1.8",
     "underscore.string": "~2.3.3",
     "chokidar": "~0.8.4",

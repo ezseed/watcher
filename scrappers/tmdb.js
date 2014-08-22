@@ -66,6 +66,7 @@ var search = function(movie, cb) {
           infos = infos[index]
           movie.title = infos.title !== undefined ? infos.title : infos.original_title
           movie.picture = infos.poster_path !== undefined ? infos.poster_path : null
+          movie.backdrop = infos.backdrop_path ? infos.backdrop_path : null
 
           //Searching for a specific code
           tmdb.infos(movie.movieType == 'tvseries' ? 'tv' : 'movie', movie.code, {language: 'fr'}, function(err, specific_infos) { 
@@ -79,7 +80,8 @@ var search = function(movie, cb) {
               movie.title = specific_infos.title != null ? specific_infos.title : specific_infos.original_title
             }
 
-            movie.picture = specific_infos.poster_path
+            movie.picture = specific_infos.poster_path ? specific_infos.poster_path : null
+            movie.backdrop = specific_infos.backdrop_path ? specific_infos.backdrop_path : null
 
             //no synopsis try english
             if(specific_infos.overview != null && specific_infos.overview.length === 0) {
