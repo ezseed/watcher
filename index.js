@@ -13,9 +13,11 @@ module.exports = function(options, cb) {
     options.tmp = options.tmp || p.join(options.root, '/tmp')
     options.socket = options.socket || 'unix://'+options.root+'/ezseed.sock'
 
+    options.lang = options.lang || 'en'
+
     options.path = {}
     options.path.relative = options.home ? p.relative(__dirname, options.home) : p.relative(__dirname, p.resolve(__dirname, './test/fixtures/watch'))
-    options.path.absolute = p.resolve(__dirname, options.path.relative)
+    options.path.absolute = options.home ? p.resolve(__dirname, options.path.relative) : options.path.relative //tests only
     options.db = options.db || {}
 
     var watcher_options = {
@@ -41,6 +43,7 @@ module.exports = function(options, cb) {
         debug('Socket bind on %s', process.ezseed_watcher.socket)
         watcher_options.socket = sock
         
+        debug('Launching watcher on '+ options.path.absolute)
         var watcher = require('./lib/watcher').watch(options.path.absolute, watcher_options)
 
         //optional callback
