@@ -26,8 +26,8 @@ describe('audio parser', function() {
 			expect(tags).to.have.property('album', 'ezseed')
 			expect(tags).to.have.property('genre', 'reggae')
 
-			expect(tags.picture).to.contain(process.ezseed_watcher.tmp)
-			expect(fs.existsSync(tags.picture)).to.be.true
+			expect(tags.picture).to.contain('tmp')
+			expect(fs.existsSync(tags.picture.replace('tmp', process.ezseed_watcher.tmp))).to.be.true
 
 			cb()
 		})

@@ -34,7 +34,7 @@ module.exports = function(filePath, cb) {
         if(!fs.existsSync(file))
           fs.writeFileSync(file, meta.picture[0].data)
         
-        tags.picture = file.replace(process.ezseed_watcher.tmp, 'tmp/')
+        tags.picture = file.replace(process.ezseed_watcher.tmp, 'tmp')
 
     } else {
       tags.picture = require('./helpers').findCoverInDirectory(p.dirname(filePath))      
