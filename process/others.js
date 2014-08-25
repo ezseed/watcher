@@ -41,7 +41,7 @@ module.exports = function(params) {
 
 			//Same but on existing files (database)
 			while(k--) {
-				j = params.existing[k].files.length
+				j = params.existing[k].files ? params.existing[k].files.length : 0
 				while(j--) {
 					if(params.existing[k].files[j] !== null && params.existing[k].files[j].path == e.path)
 						exists = true
