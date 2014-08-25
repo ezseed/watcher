@@ -41,7 +41,7 @@ module.exports = function(params, cb) {
 
     //Getting some informations
     e = _.extend(e, require('../parser/movies')(e.path))
-    //ici == serie movieType == 'tvseries'
+
     //a debug
     var indexMatch = match(params.existing, movies, e)
 
@@ -80,6 +80,7 @@ module.exports = function(params, cb) {
             movieType : e.movieType,
             name : e.name,
             season : e.season,
+            seasonInfos: infos.season_infos || {},
             title : infos.title,
             synopsis : infos.synopsis,
             trailer : infos.trailer,
@@ -90,6 +91,8 @@ module.exports = function(params, cb) {
             language : e.language,
             audio : e.audio,
             format : e.format,
+            code : infos.code,
+            infos: infos.infos || null,
 
             // allocine : infos.code,
 
