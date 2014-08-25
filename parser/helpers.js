@@ -4,58 +4,59 @@ var fs = require('fs')
   , _s = require('underscore.string')
 
 var helpers = {
-	//Dummy name by replacing the founded objects (qulity, subtitles etc.)
-	dummyName: function (name, obj) {
+  //Dummy name by replacing the founded objects (qulity, subtitles etc.)
+  dummyName: function (name, obj) {
 
-		name = name.toLowerCase()
-				.replace(obj.quality.toLowerCase(), '')
-				.replace(obj.subtitles.toLowerCase(), '')
-				.replace(obj.language.toLowerCase(), '')
-				.replace(obj.format.toLowerCase(), '')
-				.replace(obj.audio.toLowerCase(), '')
+    name = name.toLowerCase()
+        .replace(obj.quality.toLowerCase(), '')
+        .replace(obj.subtitles.toLowerCase(), '')
+        .replace(obj.language.toLowerCase(), '')
+        .replace(obj.format.toLowerCase(), '')
+        .replace(obj.audio.toLowerCase(), '')
+        .replace(new RegExp(' {2,}', 'g'), ' ') //double space
 
 
-		return _s.titleize(_s.trim(name))
-	},
-	/**
-	* Searches for a cover in a directory
-	**/
-	findCoverInDirectory: function(dir) {
-		var files = fs.readdirSync(dir)
-		
-		var m, type, cover
+    return _s.titleize(_s.trim(name))
+  },
+  /**
+  * Searches for a cover in a directory
+  **/
+  findCoverInDirectory: function(dir) {
+    var files = fs.readdirSync(dir)
+    
+    var m, type, cover
 
-		for(var i in files) {
-			m = mime.lookup(files[i])
-			type = m.split('/')
-			if(type[0] == 'image') {
-				cover = files[i]
-				break
-			}
-		}
-		
-		return cover === undefined ? null : p.join(dir, cover)
-	},
-	contains: function(words, item) {
+    for(var i in files) {
+      m = mime.lookup(files[i])
+      type = m.split('/')
+      if(type[0] == 'image') {
+        cover = files[i]
+        break
+      }
+    }
+    
+    return cover === undefined ? null : p.join(dir, cover)
+  },
+  contains: function(words, item) {
 
-		var v = '', result = null
+    var v = '', result = null
 
-		for(var j in words) {
-			v = words[j]
+    for(var j in words) {
+      v = words[j]
 
-			for(var i in item) {
-				if ( _s.trim(v.toLowerCase()) == item[i] ) 
-					result = result ? result + ' ' + item[i] : item[i] 
-			}
-		}
+      for(var i in item) {
+        if ( _s.trim(v.toLowerCase()) == item[i] ) 
+          result = result ? result + ' ' + item[i] : item[i] 
+      }
+    }
 
-		return result
-	},
-	tag: function(words, item) {
-		var tag = helpers.contains(words, item)
+    return result
+  },
+  tag: function(words, item) {
+    var tag = helpers.contains(words, item)
 
-		return tag !== null && tag.length > 0 ? tag.toUpperCase() : ''
-	}
+    return tag !== null && tag.length > 0 ? tag.toUpperCase() : ''
+  }
 }
 
 module.exports = helpers

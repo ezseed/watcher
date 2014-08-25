@@ -17,85 +17,87 @@ var qualities = ['720p', '1080p', 'cam', 'ts', 'dvdscr', 'r5', 'dvdrip', 'dvdr',
   
 module.exports = function(path) {
 
-	var basename = p.basename(path), prevDir = p.basename(p.dirname(path))
+  var basename = p.basename(path), prevDir = p.basename(p.dirname(path))
 
-	if(prevDir.length > basename.length)
-		basename = prevDir + '.' + p.extname(basename)
+  if(prevDir.length > basename.length)
+    basename = prevDir + '.' + p.extname(basename)
 
-	debug('basename', basename)
+  debug('basename', basename)
 
-	var name = basename.replace(p.extname(basename), '')
-		       .replace(/^\-[\w\d]+$/i, '') //team name
-		       .replace(/\-|_|\(|\)/g, ' ') //special chars
-		       .replace(/([\w\d]{2})\./ig, "$1 ") //Replacing dot with min 2 chars before
-		       .replace(/\.\.?([\w\d]{2})/ig, " $1")  //same with 2 chars after
-		       .replace(/part\s?\d{1}/ig, '' ) //part
-		       .replace(/\s\s+/, ' ') //double space
+  var name = basename.replace(p.extname(basename), '')
+           .replace(new RegExp('-[a-z0-9]+$', 'i'), '') //team name
+           .replace(/\-|_|\(|\)/g, ' ') //special chars
+           .replace(/([\w\d]{2})\./ig, "$1 ") //Replacing dot with min 2 chars before
+           .replace(/\.\.?([\w\d]{2})/ig, " $1")  //same with 2 chars after
+           .replace(/part\s?\d{1}/ig, '') //part
+           .replace(new RegExp(' {2,}', 'g'), ' ') //double space
 
       , words = _s.words(name)
 
-	  , movie = {
-			quality : tag(words, qualities),
-			subtitles : tag(words, subtitles),
-			language : tag(words, languages),
-			audio : tag(words, audios),
-			format : tag(words, format),
-			movieType : 'movie',
-		}
-		
-	  , r = new RegExp(/EP?[0-9]{1,2}|[0-9]{1,2}x[0-9]{1,2}/i) //searches for the tv show
-	  , y = new RegExp(/([0-9]{4})/) //Year regex
-	  , ar = []
+    , movie = {
+      quality : tag(words, qualities),
+      subtitles : tag(words, subtitles),
+      language : tag(words, languages),
+      audio : tag(words, audios),
+      format : tag(words, format),
+      movieType : 'movie',
+    }
+    
+    , r = new RegExp('EP?[0-9]{1,2}|[0-9]{1,2}x[0-9]{1,2}', 'i') //searches for the tv show
+    , y = new RegExp('([0-9]{4})') //Year regex
+    , ar = []
   
-	//Found a tv show
-	if(r.test(name)) {
+  debug('name', name)
 
-		movie.movieType = 'tvseries'
+  //Found a tv show
+  if(r.test(name)) {
 
-		//Searches for the Season number + Episode number
-		r = new RegExp(/(.*)S([0-9]{1,3})EP?([0-9]{1,3})/i)
-		var r2 = new RegExp(/(.*)\s([0-9]{1,3})x([0-9]{1,3})/i)
+    movie.movieType = 'tvseries'
 
-		ar = name.match(r)
+    //Searches for the Season number + Episode number
+    r = 'S([0-9]{1,3})EP?([0-9]{1,3})'
+    var r2 = '([0-9]{1,3})x([0-9]{1,3})'
 
-		//If it matches
-		if(ar != null) {
-			movie.name = dummyName(ar[1], movie)
-			movie.season = ar[2]
-			movie.episode = ar[3]
-		} else {
-			ar = name.match(r2)
-			if(ar) {
-				movie.name = dummyName(ar[1], movie)
-				movie.season = ar[2]
-				movie.episode = ar[3]
-			} else {
-				movie.name = dummyName(name, movie)
-			}
-		}
-	} else if(y.test(name)) {
+    ar = name.match(new RegExp(r, 'i'))
 
-		movie.movieType = 'movie'
+    //If it matches
+    if(ar != null) {
+      movie.name = dummyName(name.replace(new RegExp(r, 'ig'), ''), movie)
+      movie.season = ar[1]
+      movie.episode = ar[2]
+    } else {
+      ar = name.match(new RegExp(r2, 'i'))
+      if(ar) {
+        movie.name = dummyName(name.replace(new RegExp(r2, 'ig'), ''), movie)
+        movie.season = ar[1]
+        movie.episode = ar[2]
+      } else {
+        movie.name = dummyName(name, movie)
+      }
+    }
+  } else if(y.test(name)) {
 
-		ar = name.match(y)
+    movie.movieType = 'movie'
 
-		//year > 1900
-		if(ar != null && ar[0] > 1900) {
-			var parts = name.split(ar[0])
-			movie.name = dummyName(parts[0], movie)
-			movie.year = ar[1]
-		} else {
-			movie.name = dummyName(name, movie)
-		}
-	} else {
-		movie.name = dummyName(name, movie)
-	}
+    ar = name.match(y)
 
-	// debug('movie', movie)
+    //year > 1900
+    if(ar != null && ar[0] > 1900) {
+      var parts = name.split(ar[0])
+      movie.name = dummyName(parts[0], movie)
+      movie.year = ar[1]
+    } else {
+      movie.name = dummyName(name, movie)
+    }
+  } else {
+    movie.name = dummyName(name, movie)
+  }
 
-        movie.specific = {
-          episode: movie.episode
-        }
+  debug('movie', movie.name)
 
-	return movie
+  movie.specific = {
+    episode: movie.episode
+  }
+
+  return movie
 }
