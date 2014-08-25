@@ -18,6 +18,7 @@ module.exports = function(options, cb) {
     options.path = {}
     options.path.relative = options.home ? p.relative(__dirname, options.home) : p.relative(__dirname, p.resolve(__dirname, './test/fixtures/watch'))
     options.path.absolute = options.home ? p.resolve(__dirname, options.path.relative) : options.path.relative //tests only
+
     options.db = options.db || {}
 
     var watcher_options = {
