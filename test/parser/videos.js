@@ -14,45 +14,52 @@ var expect = require('chai').expect
  * @return {Object}
  */
 var fileToObject = function(path) {
-	var value, object = {}
+  var value, object = {}
 
-	//reads the video file
-	video = fs.readFileSync(videos[l]).toString().split('\n')
+  //reads the video file
+  video = fs.readFileSync(videos[l]).toString().split('\n')
 
-	for(var i in video) {
-		value = video[i].split('=')
-		object[value[0]] = value[1]
-	}
+  for(var i in video) {
+    value = video[i].split('=')
+    object[value[0]] = value[1]
+  }
 
-	return object
+  return object
 }
 
 describe('videos parser', function() {
 
-	before(function(cb) {
-		readdir(fixtures_path, function (err, files) {
-			videos = _.reject(files, function(path){ return /^\./.test(p.basename(path)) })
-			l = videos.length
-			cb()
-		})
-	})
+  before(function(cb) {
+    readdir(fixtures_path, function (err, files) {
+      videos = _.reject(files, function(path){ return /^\./.test(p.basename(path)) })
+      l = videos.length
+      cb()
+    })
+  })
 
-	it('should parse videos', function() {
+  it('should parse videos', function() {
 
-		while(l--) {
+    while(l--) {
 
-			//parse movie path
-			movie = parser(videos[l])
-			video = fileToObject(videos[l])
+      //parse movie path
+      movie = parser(videos[l])
+      video = fileToObject(videos[l])
 
-			for(var i in movie) {
-				if(i in video) {
-					expect(movie[i].toLowerCase()).to.contain(video[i].toLowerCase())
-				}
-			}
+      for(var i in movie) {
+        if(i in video) {
+          var n
+          if(i == 'name') {
+            n = movie.global_name || movie.name 
+          } else {
+            n = movie[i]
+          }
+                                      
+          expect(n.toLowerCase()).to.contain(video[i].toLowerCase())
+        }
+      }
 
-		}
-	})	
+    }
+  })  
 
 
 })
