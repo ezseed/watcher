@@ -42,7 +42,6 @@ module.exports = function(params, cb) {
     //Getting some informations
     e = _.extend(e, require('../parser/movies')(e.path))
 
-    //a debug
     var indexMatch = match(params.existing, movies, e)
 
     if(indexMatch !== null) {
