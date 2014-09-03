@@ -62,13 +62,19 @@ module.exports = function(path) {
 
     //If it matches
     if(ar != null) {
-      movie.name = dummyName(name.replace(new RegExp(r, 'ig'), ''), movie)
+      name = name.replace(new RegExp(r, 'ig'), '}|').split('}|')
+
+      movie.name = dummyName(name[0], movie) || dummyName(name[1], movie)
+
       movie.season = ar[1]
       movie.episode = ar[2]
     } else {
       ar = name.match(new RegExp(r2, 'i'))
       if(ar) {
-        movie.name = dummyName(name.replace(new RegExp(r2, 'ig'), ''), movie)
+        name = name.replace(new RegExp(r2, 'ig'), '}|').split('}|')
+
+        movie.name = dummyName(name[0], movie) || dummyName(name[1], movie)
+
         movie.season = ar[1]
         movie.episode = ar[2]
       } else {
@@ -93,7 +99,7 @@ module.exports = function(path) {
     movie.name = dummyName(name, movie)
   }
 
-  debug('movie', movie.name)
+  debug('movie name', movie.name)
 
   movie.specific = {
     episode: movie.episode

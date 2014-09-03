@@ -4,12 +4,12 @@ var debug = require('debug')('ezseed:watcher:scrapper')
   , dummyName = require('../parser/helpers').dummyName
   , scrapper = require('ezseed-database').db.movies.scrapper
 
-var tmdb = require('tmdb-3')("7c5105894b0446bb59b01a30cf235f3b")
+var tmdb = require('tmdb-3')("7c5105894b0446bb59b01a30cf235f3b", {secure: true, image_size: 'w185'})
 
 var search = function(movie, cb) {
 
-  movie.search = movie.search !== undefined ? movie.search : dummyName(movie.name, movie)
-  movie.title = movie.title === undefined ? _s.titleize(movie.name) : movie.title
+  movie.search = movie.search !== undefined ? movie.search : movie.name
+  movie.title = movie.title === undefined ? _s.titleize(movie.search) : movie.title
   movie.synopsis = ''
   movie.trailer = ''
   movie.picture = ''
@@ -80,17 +80,17 @@ var search = function(movie, cb) {
               if(err || !specific_infos)
                 cb(err, movie)
 
-              movie.picture = specific_infos.poster_path ? specific_infos.poster_path : null
+              movie.picture = specific_infos.poster_path || infos.poster_path || null
               movie.backdrop = specific_infos.backdrop_path ? specific_infos.backdrop_path : null
 
               movie.synopsis = specific_infos.overview ? _s.trim(specific_infos.overview.replace(/(<([^>]+)>)/ig, '')) : ''
 
               if(movie.movieType == 'tvseries') {
-                movie.title = specific_infos.name ? specific_infos.name : specific_infos.original_name
+                // movie.title = specific_infos.name ? specific_infos.name : specific_infos.original_name
                 tmdb.season(parseInt(movie.season), movie.code, {language: process.ezseed_watcher.lang}, function(err, season_infos) {
-                  movie.picture = season_infos.poster_path
+                  movie.picture = season_infos.poster_path || specific_infos.poster_path || infos.poster_path || null
                   movie.synopsis = season_infos.overview ? _s.trim(specific_infos.overview.replace(/(<([^>]+)>)/ig, '')) : movie.synopsis 
-                  movie.title = season_infos.name ? season_infos.name : movie.title
+                  // movie.title = season_infos.name ? season_infos.name : movie.title
 
                   movie.season_infos = season_infos
                   return cb(err, movie)
