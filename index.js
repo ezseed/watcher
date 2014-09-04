@@ -83,7 +83,7 @@ module.exports = function(options, cb) {
         watcher.close()
       }
 
-      console.error(e.name, ': ', e.message)
+      console.error(e.name+': ', e.message)
       console.error(e.stack)
 
       setTimeout(function() {
