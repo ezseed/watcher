@@ -83,11 +83,11 @@ module.exports = function(options, cb) {
         watcher.close()
       }
 
-      throw e;
+      console.error(e.name, ': ', e.message)
+      console.error(e.stack)
 
       setTimeout(function() {
         process.exit(1)
       , 1000})
     })
-
 }
