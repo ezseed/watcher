@@ -97,9 +97,13 @@ describe('watcher', function() {
 
     	sock.on('message', function(msg, update){
           timer.save()
-          expect(msg).to.equal('update')
-          expect(update).to.have.length.of(1)
-          can_go_on = true
+
+          if(msg == 'update') {
+            expect(update).to.have.length.of(1)
+            can_go_on = true
+          } else {
+            expect(msg).to.equal('waiting')
+          }
     	})
     })
   })
