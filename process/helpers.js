@@ -15,8 +15,8 @@ var findIndex = function(arr, iterator) {
   if(i >= 0){
     do {
       if(iterator(arr[i])) {
-              index = i
-              break
+        index = i
+        break
       }
     } while(i--)
   }
@@ -46,14 +46,14 @@ module.exports.match = function(existing, movies, e) {
       var m_name = _s.slugify(e.name)
         , movie_name = _s.slugify(movie.name)
 
-      debug('test existing '+movie_name +'=='+ m_name)
+      // debug('test existing '+movie_name +'=='+ m_name)
       if(e.movieType == 'tvseries') {
         return movie_name == m_name && movie.season == e.season 
       } else {
         return movie_name == m_name
       }
     } else
-    	return false
+      return false
   })
 
   result.movies = findIndex(movies, function(movie){ 
@@ -62,14 +62,14 @@ module.exports.match = function(existing, movies, e) {
       var m_name = _s.slugify(e.name)
         , movie_name = _s.slugify(movie.name)
 
-      debug('test parsed '+movie_name +'=='+ m_name)
+      // debug('test parsed '+movie_name +'=='+ m_name)
       if(e.movieType == 'tvseries') {
         return movie_name == m_name && movie.season == e.season 
       } else {
         return movie_name == m_name
       }
     } else
-    	return false
+      return false
   })
 
   if(result.existing !== null)
@@ -90,48 +90,52 @@ module.exports.match = function(existing, movies, e) {
 * but after some tests it's faster to do this one
 * @param files : fs.readDirSync(prevDir) - see processOthers
 **/
-var checkIsOther = function (files) {  		
+var checkIsOther = function (files) {      
 
   debug('files.length %s checkIsOther', files.length)
 
   if( files.length === 0 )
-  	return true
+    return true
 
   var file = files.shift()
 
+  debug('checkisOther file %s', file)
+
   //no hidden files
-  if(/^\./.test(p.basename(file)))
-  	return setImmediate(function() { return checkIsOther(files) })
+  if(/^\./.test(p.basename(file))) {
+    debug('checkIsOther hidden')
+    return checkIsOther(files)
+  }
 
   if(!fs.existsSync(file)) {
-  	debug('checkIsOther stat err', err)
-  	return setImmediate(function() { return checkIsOther(files) })
+    debug('checkIsOther no file')
+    return checkIsOther(files)
   }
   
   var stats = fs.statSync(file)
 
   //if it's a directory do this recursively
   if(stats.isDirectory()) {
-  	debug('checkIsOther is directory', file)
+    debug('checkIsOther is directory', file)
 
-  	var directoryFiles = fs.readdirSync(file)
-  	  , arr = _.map(directoryFiles, function(path){ return p.join(file, path) })
+    var directoryFiles = fs.readdirSync(file)
+      , arr = _.map(directoryFiles, function(path){ return p.join(file, path) })
 
-  	if(!checkIsOther(arr)) {
-  		return false
-  	} else {
-  		return setImmediate(function() { return checkIsOther(files) })
-  	}
+    if(!checkIsOther(arr)) {
+      return false
+    } else {
+      return checkIsOther(files)
+    }
   } else {
-  	var t = mime.lookup(file).split('/')[0]
-  	debug('checkIsOther type %s', t)
+    var t = mime.lookup(file).split('/')[0]
+    debug('checkIsOther type %s', t)
 
-  	if( (t == 'audio' || t == 'video'))
-  	{
-  		return false
-  	} else {
-  		return setImmediate(function() { return checkIsOther(files) })
-  	}
+    if( (t == 'audio' || t == 'video'))
+    {
+      return false
+    } else {
+      return checkIsOther(files)
+    }
   }
   
 
