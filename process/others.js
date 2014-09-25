@@ -4,6 +4,7 @@ var cache = require('memory-cache')
   , p = require('path')
   , fs = require('fs')
   , _ = require('underscore')
+  , logger = require('ezseed-logger')('process:others')
   , debug = require('debug')('ezseed:watcher:process:others')
 
 /**
@@ -86,21 +87,26 @@ module.exports = function(params) {
           console.log('error', 'Find existsing in database ?')
   */
         //Checking if the directory contains a video/audio file
-        var directoryFiles = fs.readdirSync(e.prevDir)
-          , map = _.map(directoryFiles, function(path){ return p.join(e.prevDir, path) })
+        try {
+          var directoryFiles = fs.readdirSync(e.prevDir)
 
-        if(checkIsOther(map) === true) {
-          others.push({
-            name : name,
-            files : [e],
-            prevDir : e.prevDir,
-            prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
-          })
-        } else {
-          //we cache files that aren't others, checkIsOther is heavy...
-          debug('%s was a part of an album or a movie, skipping', e.path)
-          cached.push(e.path)
-          cache.put('others', cached)
+          var map = _.map(directoryFiles, function(path){ return p.join(e.prevDir, path) })
+
+          if(checkIsOther(map) === true) {
+            others.push({
+              name : name,
+              files : [e],
+              prevDir : e.prevDir,
+              prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
+            })
+          } else {
+            //we cache files that aren't others, checkIsOther is heavy...
+            debug('%s was a part of an album or a movie, skipping', e.path)
+            cached.push(e.path)
+            cache.put('others', cached)
+          }
+        } catch(e) {
+          logger.error(e.message)
         }
 
       }
