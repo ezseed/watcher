@@ -30,9 +30,9 @@ module.exports = function(options, cb) {
 
     var watcher_options = {
         ignored: /[\/\\]\.|node_modules/,
-        persistent: true,
+        persistent: false,
         ignoreInitial: true,
-        // usePolling: false,
+        usePolling: false,
         // useFsEvents: true
     }
     
