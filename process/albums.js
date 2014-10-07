@@ -126,7 +126,7 @@ module.exports = function(params, cb) {
                 a.picture = results.artworkUrl100.replace('100x100', '400x400')
                 albums.push(a)
               } else {
-                logger.error('iTunes %s', err)
+                logger.warn('iTunes %s', err)
                 albums.push(a)
               }
 
