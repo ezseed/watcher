@@ -28,7 +28,7 @@
     "chokidar": "~0.8.4",
     "debug": "~2.0.0",
     "ezseed-database": "~0.1.17",
-    "ezseed-logger": "~0.1.1",
+    "ezseed-logger": "~0.2.0",
     "memory-cache": "0.0.5",
     "mime": "~1.2.11",
     "musicmetadata": "~0.4.6",
