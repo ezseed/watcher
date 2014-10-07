@@ -101,7 +101,7 @@ var search = function(movie, cb) {
               }
             })
           } else {
-            movie.infos = docs._id
+            movie.infos = doc._id
             return cb(err, movie)
           }
 
