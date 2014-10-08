@@ -27,7 +27,7 @@
     "chalk": "~0.5.1",
     "chokidar": "~0.9.0",
     "debug": "~2.0.0",
-    "ezseed-database": "~0.1.17",
+    "ezseed-database": "~0.1.21",
     "ezseed-logger": "~0.2.0",
     "memory-cache": "0.0.5",
     "mime": "~1.2.11",
