@@ -29,7 +29,7 @@ module.exports = function(options, cb) {
     options.db = options.db || {}
 
     var watcher_options = {
-        ignored: /[\/\\]\.|node_modules/,
+        ignored: /[\/\\]\.|node_modules|incomplete/,
         persistent: false,
         ignoreInitial: true,
         usePolling: false,
@@ -75,7 +75,7 @@ module.exports = function(options, cb) {
 
       setTimeout(function() {
         process.exit(0)
-      , 1000})
+      }, 1000)
     })
 
     process.on('uncaughtException', function(e) {
@@ -88,6 +88,6 @@ module.exports = function(options, cb) {
 
       setTimeout(function() {
         process.exit(1)
-      , 1000})
+      }, 1000)
     })
 }
