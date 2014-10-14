@@ -120,7 +120,11 @@ module.exports = function(params, cb) {
                 prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
               }
 
-          if(a.picture == null) {
+            //do we have any metadata from idv3/2?
+            //@todo might me better handled by the parser
+            var isknown = a.artist !== 'Unknown' && a.album !== 'No album' 
+
+          if(a.picture == null && isknown) {
             itunes.infos(a, function(err, results) {
               if(err === null) {
                 a.picture = results.artworkUrl100.replace('100x100', '400x400')
@@ -130,12 +134,13 @@ module.exports = function(params, cb) {
                 albums.push(a)
               }
 
-              
               return callback()
             })
+
           } else {
-            albums.push(a)
-            return callback()
+
+             albums.push(a)
+             return callback()
           }
         }
       })
