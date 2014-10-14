@@ -2,14 +2,25 @@ var fs = require('fs')
   , Buffer = require('buffer').Buffer
   , p = require('path')
   , logger = require('ezseed-logger')('watcher')
-  , mm = require('musicmetadata'), tags
+  , mm = require('musicmetadata')
   
+  , debug = require('debug')('ezseed:process:albums')
+
 module.exports = function(filePath, cb) {
 
   var stream = fs.createReadStream(filePath)
   var parser = mm(stream)
 
+  var tags = {
+    artist: 'Unknown',
+    album: 'No album',
+    title: p.basename(filePath),
+    specific: {}
+  }
+
   parser.on('metadata', function(meta) {
+
+    debug('got metadata from id3')
 
     tags = {
 
@@ -39,8 +50,6 @@ module.exports = function(filePath, cb) {
     } else {
       tags.picture = require('./helpers').findCoverInDirectory(p.dirname(filePath))      
     }
-
-    cb(null, tags)
   })
 
   parser.on('done', function (err) {
@@ -48,9 +57,11 @@ module.exports = function(filePath, cb) {
 
     if (err) {
       logger.error('Error while parsing metadata for file: '+filePath, err)
-
-      cb(err)
     }
+
+    debug('Done parsing %s', filePath)
+
+    cb(err || null, tags)
   })
 
 }
