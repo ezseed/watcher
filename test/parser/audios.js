@@ -63,6 +63,15 @@ describe('audio parser', function() {
 
   })
 
+  it('should find no tags', function(cb) {
+    parser(p.join(fixtures_path, 'ezseed-nothing.mp3'), function(err, tags) {
+      expect(err).not.to.be.null
+      expect(tags.artist).to.equal('Unknown')
+      cb()
+    })
+
+  })
+
   after(function(cb) {
     rm(process.ezseed_watcher.tmp, function(err) {
       expect(err).to.be.null
