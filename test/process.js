@@ -68,7 +68,7 @@ var remove = function() {
 }
 
 describe('watcher', function() {
-  this.timeout(10000)
+  this.timeout(30000)
   this.watcher = null
   var self = this
 
@@ -81,6 +81,8 @@ describe('watcher', function() {
     //start watcher - async to make sure db is opened
     require('../')(opts, function(err, watcher) {
     	
+        expect(err).to.be.null
+
     	self.watcher = watcher
 
     	sock.connect(process.ezseed_watcher.socket)
@@ -131,6 +133,8 @@ describe('watcher', function() {
   it('should refresh watcher through rpc', function(cb) {
     timer.start()
     client.call('refresh', pathToWatch, function(err, object) {
+      expect(err).to.be.null
+
       results = object[0]
       timer.save()
       cb()
