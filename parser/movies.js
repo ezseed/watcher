@@ -48,39 +48,44 @@ module.exports = function(path) {
     , ar = []
   
   debug('name', name)
+  
+  var not_year = name.match(new RegExp('([0-9])([0-9]{2})[0-9]?'), 'i')
 
   //Found a tv show
-  if(r.test(name)) {
+  if(r.test(name) || (not_year && not_year[0].length < 4)) {
 
     movie.movieType = 'tvseries'
 
     //Searches for the Season number + Episode number
-    r = 'S([0-9]{1,3})EP?([0-9]{1,3})'
-    var r2 = '([0-9]{1,3})x([0-9]{1,3})'
+    var series = ['S([0-9]{1,3})EP?([0-9]{1,3})', '([0-9]{1,3})x([0-9]{1,3})', '(0?[0-9])([0-9]{2})']
 
-    ar = name.match(new RegExp(r, 'i'))
+    for(var i in series) {
+      ar = name.match(new RegExp(series[i], 'i'))
 
-    //If it matches
-    if(ar != null) {
-      name = name.replace(new RegExp(r, 'ig'), '}|').split('}|')
+      if(ar !== null) {
+        name = name.replace(new RegExp(series[i], 'ig'), '}|').split('}|')
 
-      movie.name = dummyName(name[0], movie) || dummyName(name[1], movie)
+        name = dummyName(name[0], movie) || dummyName(name[1], movie)
 
-      movie.season = ar[1]
-      movie.episode = ar[2]
-    } else {
-      ar = name.match(new RegExp(r2, 'i'))
-      if(ar) {
-        name = name.replace(new RegExp(r2, 'ig'), '}|').split('}|')
+        var year = name.match(y)
 
-        movie.name = dummyName(name[0], movie) || dummyName(name[1], movie)
+        if(year && year[0] > 1900) {
+          name = name.replace(year[0], '') 
+        }
 
-        movie.season = ar[1]
+        movie.name = name
+
+        movie.season = '0' + parseInt(ar[1])
         movie.episode = ar[2]
-      } else {
-        movie.name = dummyName(name, movie)
+
+        break;
       }
     }
+    
+    if(!movie.name) {
+      movie.name = dummyName(name, movie)
+    }
+
   } else if(y.test(name)) {
 
     movie.movieType = 'movie'

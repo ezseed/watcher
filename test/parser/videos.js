@@ -46,6 +46,7 @@ describe('videos parser', function() {
       video = fileToObject(videos[l])
 
       for(var i in movie) {
+        // console.log('testing %s', movie.name)
         if(i in video) {
           var n
           if(i == 'name') {
