@@ -30,33 +30,48 @@ module.exports = function(params) {
     var exists = false
 
     //Test if the file already exists by path
-    var k = params.existing.length, z = cached.length, j = 0
+    var z = cached.length, j = 0
 
     //Search paths in cached values (only files belonging to an album or a movie nfo|pictures etc.)
-    while(z--)
-      if(e.path == cached[z])
+    while(z--) {
+      if(e.path == cached[z]) {
         exists = true
-    
-    if(!exists) {
+        debug('cached file %s exists', e.path)
+        break;
+      }
+    }
 
+    if(exists === false) {
+      var k = params.existing.length 
+  
       //Same but on existing files (database)
       while(k--) {
         j = params.existing[k].files ? params.existing[k].files.length : 0
         while(j--) {
-          if(params.existing[k].files[j] !== null && params.existing[k].files[j].path == e.path)
+          if(params.existing[k].files[j] !== null && params.existing[k].files[j].path == e.path) {
             exists = true
+            break;
+          }
+        }
+
+        if(exists === true) {
+          debug('file %s exists in db', e.path)
+          break;
         }
       }
 
     }
 
-    if(!exists) {
+    if(exists === false) {
+      debug('does not exist', e.path)
 
       var indexMatch = null
         , name = ''
         , single = false
 
-      if(e.prevDir != pathToWatch) {
+      var app_re = new RegExp('\.app', 'i')
+
+      if(e.prevDir != pathToWatch && !app_re.test(p.basename(e.path))) {
         indexMatch = findIndex(others, function(other) { return e.prevDir == other.prevDir })
         name = p.basename(e.prevDir)
         single = false
@@ -79,11 +94,6 @@ module.exports = function(params) {
         others[indexMatch].files.push(e)
       } else {
 
-  /*      indexMatch = findIndex(params.existing, function(other) { return e.prevDir == other.prevDir})
-
-        if(indexMatch !== null)
-          console.log('error', 'Find existsing in database ?')
-  */
         //Checking if the directory contains a video/audio file
         try {
           var directoryFiles = fs.readdirSync(e.prevDir)
@@ -109,6 +119,7 @@ module.exports = function(params) {
 
       }
     }
+
   }
   
   return others
