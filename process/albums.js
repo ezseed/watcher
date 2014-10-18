@@ -1,7 +1,6 @@
 var p = require('path')
-  , _ = require('underscore')
-  , _s = require('underscore.string')
   , itunes = require('../scrappers/itunes')
+  , _s = require('underscore.string')
   , logger = require('ezseed-logger')('watcher')
   , findIndex = require('./helpers').findIndex
   , async = require('async')
@@ -35,7 +34,7 @@ module.exports = function(params, cb) {
     var j = params.existing.length, o = 0
 
     while(j-- && !exists) {
-      o = params.existing[j].songs.length
+      o = params.existing[j].songs ? params.existing[j].songs.length : 0
       while(o--) {
         if(params.existing[j].songs[o] !== null && params.existing[j].songs[o].path.indexOf(e.path) !== -1 ) {
           exists = true

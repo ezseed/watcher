@@ -2,11 +2,10 @@ var _s = require('underscore.string')
   , p = require('path')
   , fs = require('fs')
   , mime = require('mime')
-  , _ = require('underscore')
   , debug = require('debug')('ezseed:watcher:process:helpers')
 
 /**
-* Similar to _.find but return the first index of the array matching the iterator
+* Returnn the first index of the array matching the iterator
 **/
 
 var findIndex = function(arr, iterator) {
@@ -119,7 +118,7 @@ var checkIsOther = function (files) {
     debug('checkIsOther is directory', file)
 
     var directoryFiles = fs.readdirSync(file)
-      , arr = _.map(directoryFiles, function(path){ return p.join(file, path) })
+      , arr = directoryFiles.map(function(path){ return p.join(file, path) })
 
     if(!checkIsOther(arr)) {
       return false

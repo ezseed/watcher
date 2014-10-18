@@ -3,7 +3,6 @@ var cache = require('memory-cache')
   , checkIsOther = require('./helpers').checkIsOther
   , p = require('path')
   , fs = require('fs')
-  , _ = require('underscore')
   , logger = require('ezseed-logger')('process:others')
   , debug = require('debug')('ezseed:watcher:process:others')
 
@@ -58,7 +57,6 @@ module.exports = function(params) {
         , single = false
 
       if(e.prevDir != pathToWatch) {
-
         indexMatch = findIndex(others, function(other) { return e.prevDir == other.prevDir })
         name = p.basename(e.prevDir)
         single = false
@@ -90,7 +88,7 @@ module.exports = function(params) {
         try {
           var directoryFiles = fs.readdirSync(e.prevDir)
 
-          var map = _.map(directoryFiles, function(path){ return p.join(e.prevDir, path) })
+          var map = directoryFiles.map(function(path){ return p.join(e.prevDir, path) })
 
           if(checkIsOther(map) === true) {
             others.push({

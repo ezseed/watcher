@@ -1,11 +1,10 @@
 var expect = require('chai').expect
   , parser = require('../../parser/movies')
-  , readdir = require('recursive-readdir')
+  , readdir = require('../../lib/readdir')
   , fs = require('fs')
   , p = require('path')
   , fixtures_path = p.join(__dirname, '../fixtures/parser/video')
   , videos, l, movie, video
-  , _ = require('underscore')
 
 /**
  * Transforms a file content to an object
@@ -29,15 +28,12 @@ var fileToObject = function(path) {
 
 describe('videos parser', function() {
 
-  before(function(cb) {
-    readdir(fixtures_path, function (err, files) {
-      videos = _.reject(files, function(path){ return /^\./.test(p.basename(path)) })
-      l = videos.length
-      cb()
-    })
-  })
-
   it('should parse videos', function() {
+
+    videos = readdir(fixtures_path).map(function(v) {
+      return fixtures_path + '/' + v
+    })
+    l = videos.length
 
     while(l--) {
 

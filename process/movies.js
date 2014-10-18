@@ -1,5 +1,4 @@
-var _ = require('underscore')
-  , tmdb = require('../scrappers/tmdb')
+var tmdb = require('../scrappers/tmdb')
   , logger = require('ezseed-logger')('watcher')
   , findIndex = require('./helpers').findIndex
   , match = require('./helpers').match
@@ -40,7 +39,11 @@ module.exports = function(params, cb) {
       return callback()
 
     //Getting some informations
-    e = _.extend(e, require('../parser/movies')(e.path))
+    var parsed_infos = require('../parser/movies')(e.path)
+
+    for(var i in parsed_infos) {
+      e[i] = parsed_infos[i]
+    }
 
     var indexMatch = match(params.existing, movies, e)
 
