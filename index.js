@@ -2,7 +2,6 @@ var fs = require('fs')
   , p = require('path')
   , logger = require('ezseed-logger')('watcher')
   , debug = require('debug')('ezseed:watcher')
-  , chalk = require('chalk')
   , rpc = require('pm2-axon-rpc')
   , axon = require('axon')
   , rep = axon.socket('rep')
@@ -67,7 +66,7 @@ module.exports = function(options, cb) {
 
 
     process.on('SIGINT', function() {
-      logger.info(chalk.bold.red("Caught interrupt signal"))
+      logger.info("Caught interrupt signal")
 
       if(watcher) {
         watcher.close()
