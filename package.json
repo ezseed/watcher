@@ -1,6 +1,6 @@
 {
   "name": "ezseed-watcher",
-  "version": "0.1.9",
+  "version": "1.0.0",
   "description": "Ezseed watcher handles fiels watching",
   "main": "index.js",
   "scripts": {
