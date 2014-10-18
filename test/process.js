@@ -214,7 +214,7 @@ describe('watcher', function() {
 
     db.paths.get(pathToWatch._id, function(err, docs) {
     	expect(err).to.be.null
-        // console.log(results.movies, docs.toObject().movies)
+        // console.log(results.others, docs.toObject().others)
     	expect(results).to.deep.equal(docs.toObject())
     	cb()
     })
