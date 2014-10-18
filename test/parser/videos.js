@@ -30,9 +30,7 @@ describe('videos parser', function() {
 
   it('should parse videos', function() {
 
-    videos = readdir(fixtures_path).map(function(v) {
-      return fixtures_path + '/' + v
-    })
+    videos = readdir(fixtures_path)
     l = videos.length
 
     while(l--) {
