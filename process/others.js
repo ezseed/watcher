@@ -23,10 +23,10 @@ module.exports = function(params) {
     , e, l = params.others.length
 
   debug('Has %s files to parse', l)
-  
+
   while(l--) {
     e = params.others[l]
-    
+
     var exists = false
 
     //Test if the file already exists by path
@@ -43,9 +43,15 @@ module.exports = function(params) {
 
     if(exists === false) {
       var k = params.existing.length 
-  
+
       //Same but on existing files (database)
       while(k--) {
+
+        if(params.existing[k].prevDir == e.prevDir) {
+          exists = true;
+          break;
+        }
+
         j = params.existing[k].files ? params.existing[k].files.length : 0
         while(j--) {
           if(params.existing[k].files[j] !== null && params.existing[k].files[j].path == e.path) {
@@ -62,56 +68,33 @@ module.exports = function(params) {
 
     }
 
-    if(exists === false) {
-      debug('does not exist', e.path)
+    debug(e.prevDir, e.name)
 
-      var indexMatch = null
-        , name = ''
-        , single = false
+    //check if the file is belonging to a known directory but not the root directory
+    if(e.prevDir != pathToWatch && exists === false) {
+      debug('test on prevDir')
 
-      var app_re = new RegExp('\.app', 'i')
+      var indexMatch = findIndex(others, function(other) { 
+        console.log(e.prevDir == other.prevDir, e.name + ' vs ' + other.name)
+        return e.prevDir == other.prevDir 
+      }) 
 
-      if(e.prevDir != pathToWatch && !app_re.test(p.basename(e.path))) {
-        indexMatch = findIndex(others, function(other) { return e.prevDir == other.prevDir })
-        name = p.basename(e.prevDir)
-        single = false
+      if(indexMatch !== null) {
+        exists = true
+        debug('Others this is a file for a subdirectory - indexMatch on %s at %s- skipping', others[indexMatch].name, indexMatch)
       } else {
-        single = true
-        name = e.name
-      }
-
-      debug('%s is single ?', e.name, single)
-
-      if(single) {
-        others.push({
-          name : name,
-          files : [e],
-          prevDir : e.prevDir,
-          prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
-        })
-      } else if(indexMatch !== null) {
-        debug('Others - indexMatch on %s', others[indexMatch].name)
-        others[indexMatch].files.push(e)
-      } else {
-
         //Checking if the directory contains a video/audio file
         try {
           var directoryFiles = fs.readdirSync(e.prevDir)
 
           var map = directoryFiles.map(function(path){ return p.join(e.prevDir, path) })
 
-          if(checkIsOther(map) === true) {
-            others.push({
-              name : name,
-              files : [e],
-              prevDir : e.prevDir,
-              prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
-            })
-          } else {
+          if(checkIsOther(map) !== true) {
             //we cache files that aren't others, checkIsOther is heavy...
             debug('%s was a part of an album or a movie, skipping', e.path)
             cached.push(e.path)
             cache.put('others', cached)
+            exists = true
           }
         } catch(e) {
           logger.error(e.message)
@@ -120,8 +103,19 @@ module.exports = function(params) {
       }
     }
 
-  }
-  
-  return others
+    //does not exist, add it to database
+    if(exists === false) {
+      debug('does not exist', e.path)
 
+        others.push({
+          name : e.name,
+          files : [e],
+          prevDir : e.prevDir,
+          prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
+        })
+    }
+
+  }
+
+  return others
 }
