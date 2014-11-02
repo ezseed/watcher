@@ -149,7 +149,7 @@ describe('watcher', function() {
 
     	expect(results.movies.length).to.equal(docs.movies.length)
     	expect(results.albums.length).to.equal(docs.albums.length)
-    	expect(results.others.length).to.equal(docs.others.length)
+    	// expect(results.others.length).to.equal(docs.others.length)
         //force leaning
         results = docs.toObject()
     	cb()
@@ -198,13 +198,9 @@ describe('watcher', function() {
 
   })
 
-  it('should have the right number of others', function() {
-    expect(results.others).to.have.length.of(3)
-  })
-  
   it('should trigger watcher again [change]', function(cb) {
 
-    fs.writeFileSync(pathToWatch.path+'/other/test1.txt', 'another test data')
+    fs.writeFileSync(pathToWatch.path+'/test1.txt', 'another test data')
     timer.start()
 
     wait_until_task_complete(cb)
@@ -214,7 +210,6 @@ describe('watcher', function() {
 
     db.paths.get(pathToWatch._id, function(err, docs) {
     	expect(err).to.be.null
-        // console.log(results.others, docs.toObject().others)
     	expect(results).to.deep.equal(docs.toObject())
     	cb()
     })
@@ -262,11 +257,11 @@ describe('watcher', function() {
     	expect(err).to.be.null
 
     	results = docs
-    	others = docs.others, movies = docs.movies, albums = docs.albums
+    	movies = docs.movies, albums = docs.albums
 
     	expect(docs.movies).to.be.empty
     	expect(docs.albums).to.be.empty
-    	expect(docs.others).to.be.empty
+    	// expect(docs.others).to.be.empty
 
     	cb()
 
