@@ -75,7 +75,7 @@ module.exports = function(params) {
       debug('test on prevDir')
 
       var indexMatch = findIndex(others, function(other) { 
-        console.log(e.prevDir == other.prevDir, e.name + ' vs ' + other.name)
+        // console.log(e.prevDir == other.prevDir, e.name + ' vs ' + other.name)
         return e.prevDir == other.prevDir 
       }) 
 
@@ -107,12 +107,12 @@ module.exports = function(params) {
     if(exists === false) {
       debug('does not exist', e.path)
 
-        others.push({
-          name : e.name,
-          files : [e],
-          prevDir : e.prevDir,
-          prevDirRelative : e.prevDir.replace(process.ezseed_watcher.root, '')
-        })
+      others.push({
+        name : e.name,
+        files : [e],
+        prevDir : e.prevDir,
+        prevDirRelative : e.prevDir.replace(pathToWatch, '')
+      })
     }
 
   }
